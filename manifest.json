@@ -1,0 +1,8 @@
+{
+    "name": "Message hider",
+    "version": "1.0.0",
+    "description": "Hide a message by right clicking on it.",
+    "author": "FC#5104",
+    "license": "MIT",
+    "repo": "https://github.com/FC5570/powercord-message-hider"
+}
