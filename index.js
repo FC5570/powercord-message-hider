@@ -3,12 +3,21 @@ const { Plugin } = require('powercord/entities');
 const { inject, uninject } = require('powercord/injector');
 const { React, getModule } = require('powercord/webpack');
 
+const Settings = require('./components/Settings');
+
 class MessageHider extends Plugin {
 	async startPlugin() {
 		const { MenuItem } = await getModule(['MenuItem']);
 		const menu = await getModule(
 			(m) => m?.default?.displayName === 'MessageContextMenu'
 		);
+
+		powercord.api.settings.registerSettings(this.entityID, {
+			category: this.entityID,
+			label: 'Message Hider',
+			render: Settings
+		});
+
 		inject('powercord-message-hider', menu, 'default', (args, res) => {
 			res.props.children.splice(
 				4,
@@ -24,7 +33,7 @@ class MessageHider extends Plugin {
 						document.getElementById(
 							`chat-messages-${message.id}`
 						).style.display = 'none';
-
+						if (powercord.pluginManager.get("powercord-message-hider").settings.get('popup', 'true') == false ) { return }
 						powercord.api.notices.sendToast('message-hidden', {
 							header: 'Success!',
 							type: 'success',
@@ -52,6 +61,7 @@ class MessageHider extends Plugin {
 
 	pluginWillUnload() {
 		uninject('powercord-message-hider');
+		powercord.api.settings.unregisterSettings(this.entityID);
 	}
 }
 
